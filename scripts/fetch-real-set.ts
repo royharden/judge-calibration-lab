@@ -1,6 +1,6 @@
 /** Explicit download-only utility; never called by imports, eval, app or answer data.
  * No assumed dataset endpoint, credential or licence grant. Future owner command:
- * npx tsx scripts/fetch-real-set.ts --url https://... --dest <new-file> 
+ * npx tsx scripts/fetch-real-set.ts --url https://... --dest <new-file>
  *   --license-ack I-verified-dataset-and-source-licences
  * The acknowledgement includes annotator overlap and source/article rights. It
  * records an operator assertion; the utility cannot establish legal permission.
