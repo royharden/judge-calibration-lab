@@ -1,0 +1,4 @@
+project_id = "judge-calibration-lab"
+
+[functions.judge-run]
+verify_jwt = true

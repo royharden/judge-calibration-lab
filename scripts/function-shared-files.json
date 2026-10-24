@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "source": "src/core/canonical.ts",
+      "destination": "supabase/functions/judge-run/_core/core/canonical.ts"
+    },
+    {
+      "source": "src/core/diagnostics/findings.ts",
+      "destination": "supabase/functions/judge-run/_core/core/diagnostics/findings.ts"
+    },
+    {
+      "source": "src/core/diagnostics/suggestions.ts",
+      "destination": "supabase/functions/judge-run/_core/core/diagnostics/suggestions.ts"
+    },
+    {
+      "source": "src/core/fixtures/synthetic.ts",
+      "destination": "supabase/functions/judge-run/_core/core/fixtures/synthetic.ts"
+    },
+    {
+      "source": "src/core/fixtures/traps.ts",
+      "destination": "supabase/functions/judge-run/_core/core/fixtures/traps.ts"
+    },
+    {
+      "source": "src/core/goldset/csv.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/csv.ts"
+    },
+    {
+      "source": "src/core/goldset/fingerprint.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/fingerprint.ts"
+    },
+    {
+      "source": "src/core/goldset/import.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/import.ts"
+    },
+    {
+      "source": "src/core/goldset/labelsheet.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/labelsheet.ts"
+    },
+    {
+      "source": "src/core/goldset/probesets.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/probesets.ts"
+    },
+    {
+      "source": "src/core/goldset/split.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/split.ts"
+    },
+    {
+      "source": "src/core/goldset/types.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/types.ts"
+    },
+    {
+      "source": "src/core/goldset/validate.ts",
+      "destination": "supabase/functions/judge-run/_core/core/goldset/validate.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/index.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/index.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/jevGate.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/jevGate.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/missingness.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/missingness.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/policy.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/policy.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/policyConst.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/policyConst.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/scenarios.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/scenarios.ts"
+    },
+    {
+      "source": "src/core/heldoutlock/verdict.ts",
+      "destination": "supabase/functions/judge-run/_core/core/heldoutlock/verdict.ts"
+    },
+    {
+      "source": "src/core/judge/judge.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/judge.ts"
+    },
+    {
+      "source": "src/core/judge/levelMap.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/levelMap.ts"
+    },
+    {
+      "source": "src/core/judge/lexical.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/lexical.ts"
+    },
+    {
+      "source": "src/core/judge/mock.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/mock.ts"
+    },
+    {
+      "source": "src/core/judge/modal.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/modal.ts"
+    },
+    {
+      "source": "src/core/judge/parse.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/parse.ts"
+    },
+    {
+      "source": "src/core/judge/prompt.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judge/prompt.ts"
+    },
+    {
+      "source": "src/core/judgestats/agreement.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/agreement.ts"
+    },
+    {
+      "source": "src/core/judgestats/bands.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/bands.ts"
+    },
+    {
+      "source": "src/core/judgestats/bootstrap.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/bootstrap.ts"
+    },
+    {
+      "source": "src/core/judgestats/confusion.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/confusion.ts"
+    },
+    {
+      "source": "src/core/judgestats/consensus.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/consensus.ts"
+    },
+    {
+      "source": "src/core/judgestats/index.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/index.ts"
+    },
+    {
+      "source": "src/core/judgestats/kappa.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/kappa.ts"
+    },
+    {
+      "source": "src/core/judgestats/paired.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/paired.ts"
+    },
+    {
+      "source": "src/core/judgestats/pav.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/pav.ts"
+    },
+    {
+      "source": "src/core/judgestats/quantile.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/quantile.ts"
+    },
+    {
+      "source": "src/core/judgestats/undefined.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/undefined.ts"
+    },
+    {
+      "source": "src/core/judgestats/wilson.ts",
+      "destination": "supabase/functions/judge-run/_core/core/judgestats/wilson.ts"
+    },
+    {
+      "source": "src/core/plan/costBound.ts",
+      "destination": "supabase/functions/judge-run/_core/core/plan/costBound.ts"
+    },
+    {
+      "source": "src/core/plan/runPlan.ts",
+      "destination": "supabase/functions/judge-run/_core/core/plan/runPlan.ts"
+    },
+    {
+      "source": "src/core/prng.ts",
+      "destination": "supabase/functions/judge-run/_core/core/prng.ts"
+    },
+    {
+      "source": "src/core/probes/injection.ts",
+      "destination": "supabase/functions/judge-run/_core/core/probes/injection.ts"
+    },
+    {
+      "source": "src/core/probes/pairCheck.ts",
+      "destination": "supabase/functions/judge-run/_core/core/probes/pairCheck.ts"
+    },
+    {
+      "source": "src/core/probes/repeatability.ts",
+      "destination": "supabase/functions/judge-run/_core/core/probes/repeatability.ts"
+    },
+    {
+      "source": "src/core/probes/scaleOrder.ts",
+      "destination": "supabase/functions/judge-run/_core/core/probes/scaleOrder.ts"
+    },
+    {
+      "source": "src/core/probes/verbosity.ts",
+      "destination": "supabase/functions/judge-run/_core/core/probes/verbosity.ts"
+    },
+    {
+      "source": "src/core/report/beforeAfter.ts",
+      "destination": "supabase/functions/judge-run/_core/core/report/beforeAfter.ts"
+    },
+    {
+      "source": "src/core/report/fits.ts",
+      "destination": "supabase/functions/judge-run/_core/core/report/fits.ts"
+    },
+    {
+      "source": "src/core/report/judgeTable.ts",
+      "destination": "supabase/functions/judge-run/_core/core/report/judgeTable.ts"
+    },
+    {
+      "source": "src/core/result.ts",
+      "destination": "supabase/functions/judge-run/_core/core/result.ts"
+    },
+    {
+      "source": "src/core/rubric/rubric.ts",
+      "destination": "supabase/functions/judge-run/_core/core/rubric/rubric.ts"
+    },
+    {
+      "source": "src/core/sha256.ts",
+      "destination": "supabase/functions/judge-run/_core/core/sha256.ts"
+    },
+    {
+      "source": "src/core/tokenize.ts",
+      "destination": "supabase/functions/judge-run/_core/core/tokenize.ts"
+    },
+    {
+      "source": "src/core/types.ts",
+      "destination": "supabase/functions/judge-run/_core/core/types.ts"
+    },
+    {
+      "source": "src/shared/callledger.ts",
+      "destination": "supabase/functions/judge-run/_core/shared/callledger.ts"
+    },
+    {
+      "source": "src/shared/providers.ts",
+      "destination": "supabase/functions/judge-run/_core/shared/providers.ts"
+    },
+    {
+      "source": "src/shared/rulings.ts",
+      "destination": "supabase/functions/judge-run/_core/shared/rulings.ts"
+    }
+  ]
+}
