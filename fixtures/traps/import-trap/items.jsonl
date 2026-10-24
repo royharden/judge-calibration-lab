@@ -1,0 +1,9 @@
+{"id":"t-01","task_text":"Summarise the note about the harbour ferry.","answer":"The ferry runs every hour.","source":"The harbour ferry runs every hour from six in the morning until midnight."}
+{"id":"t-02","task_text":"Summarise the note about the harbour ferry.","answer":"It runs from six in the morning until midnight.","source":"The harbour ferry runs every hour from six in the morning until midnight."}
+{"id":"t-03","task_text":"Summarise the note about the town hall clock.","answer":"The clock was repaired in spring.","source":"The town hall clock was repaired in spring after a storm."}
+{"id":"t-03","task_text":"Summarise the note about the town hall clock.","answer":"A storm damaged the clock.","source":"The town hall clock was repaired in spring after a storm."}
+{"id":"t-04","task_text":"Summarise the note about the park pond.","answer":"The pond was cleaned.","source":"The park pond was cleaned and restocked with fish."}
+{"id":"t-05","task_text":"Summarise the note about the park pond.","answer":"The pond was cleaned.","source":"The park pond was cleaned and restocked with fish."}
+{"id":"t-06","task_text":"Summarise the note about the bakery.","answer":"The bakery opens early.","source":"The corner bakery opens at five and sells out by noon."}
+{"id":"t-07","task_text":"Summarise the note about the bakery.","answer":"It sells out by noon.","source":"The corner bakery opens at five and sells out by noon."}
+{"id":"t-08","task_text":"Summarise the note about the bridge.","answer":"The bridge reopened.","source":"The old stone bridge reopened after a year of repairs."}

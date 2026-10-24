@@ -1,0 +1,14 @@
+{
+  "name": "third-version-refused-then-burn",
+  "versions": ["v1", "v2", "v3"],
+  "steps": [
+    { "op": "preregister", "baseline": "v1", "chosen": "v2", "expect": "ok" },
+    { "op": "request_look", "prereg": 0, "expect": "ok", "slotsUsedAfter": 2 },
+    { "op": "report_status", "expect": "clean" },
+    { "op": "preregister", "baseline": "v1", "chosen": "v3", "expect": "ok" },
+    { "op": "request_look", "prereg": 1, "expect": "refused", "reason": "heldout_exhausted", "slotsUsedAfter": 2 },
+    { "op": "burn", "confirm": "BURN", "expect": "ok" },
+    { "op": "request_look", "prereg": 1, "expect": "ok" },
+    { "op": "report_status", "expect": "contaminated" }
+  ]
+}
