@@ -21,3 +21,8 @@ npm-debug.log*
 Thumbs.db
 
 # results/ is tracked on purpose (generated evidence is committed).
+
+# private agent scratch and local-only dataset downloads
+.agent-work/
+data/local/
+downloads/
