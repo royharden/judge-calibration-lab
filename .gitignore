@@ -1,0 +1,23 @@
+# dependencies and build output
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# local environment (never commit real values; .env.example is the template)
+.env
+.env.local
+.env.*.local
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+# logs and OS noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# results/ is tracked on purpose (generated evidence is committed).
