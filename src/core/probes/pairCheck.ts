@@ -11,7 +11,7 @@
 //
 // Written in M2 because fixtures and mocks need it; M3 owns the other probes.
 
-import { tokenize } from '../tokenize.ts';
+import { tokenize, whitespaceWordCount } from '../tokenize.ts';
 
 export const PAIR_CHECK_VERSION = 'pair-check/v1';
 export const PAIR_MIN_RATIO = 1.5;
@@ -23,9 +23,10 @@ export type PairCheckInput = { short: string; long: string; facts?: readonly str
 export type PairCheckResult = {
   pass: boolean;
   reasons: PairRejectReason[];
+  /** Whitespace-word counts, before punctuation normalisation. */
   shortWords: number;
   longWords: number;
-  /** long / short word ratio; null when short has no words. */
+  /** long / short whitespace-word ratio; null when short has no whitespace words. */
   ratio: number | null;
   /** Facts missing from short or long (as given). */
   missingFacts: string[];
@@ -44,6 +45,8 @@ export function containsTokens(hay: readonly string[], needle: readonly string[]
 export function pairCheck(input: PairCheckInput): PairCheckResult {
   const s = tokenize(input.short);
   const l = tokenize(input.long);
+  const shortWords = whitespaceWordCount(input.short);
+  const longWords = whitespaceWordCount(input.long);
   const reasons: PairRejectReason[] = [];
   const missingFacts: string[] = [];
 
@@ -54,14 +57,14 @@ export function pairCheck(input: PairCheckInput): PairCheckResult {
     if (!containsTokens(s, ft) || !containsTokens(l, ft)) missingFacts.push(f);
   }
   if (missingFacts.length > 0) reasons.push('missing_fact');
-  if (s.length > 0 && l.length < PAIR_MIN_RATIO * s.length) reasons.push('length_ratio');
+  if (shortWords > 0 && longWords < PAIR_MIN_RATIO * shortWords) reasons.push('length_ratio');
 
   return {
     pass: reasons.length === 0,
     reasons,
-    shortWords: s.length,
-    longWords: l.length,
-    ratio: s.length === 0 ? null : l.length / s.length,
+    shortWords,
+    longWords,
+    ratio: shortWords === 0 ? null : longWords / shortWords,
     missingFacts,
   };
 }

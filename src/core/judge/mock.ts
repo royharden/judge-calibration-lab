@@ -5,7 +5,7 @@
 //
 //   clean            truth
 //   lenient          truth + 1
-//   verbosity        truth + 1 when the answer is long: >= 1.5x the pair's short text words
+//   verbosity        truth + 1 when the answer is long: >= 1.5x the pair's short whitespace words
 //                    (pair probes) or > the dev median answer words (ordinary items)
 //   merges-3-4       truth level shown as 4 is scored as 3, UNLESS the rubric's level-4
 //                    description contains MERGE_FIX_MARKER
@@ -17,7 +17,7 @@
 
 import type { Item, MockDefect, Rubric } from '../types.ts';
 import { deriveStream } from '../prng.ts';
-import { wordCount } from '../tokenize.ts';
+import { whitespaceWordCount, wordCount } from '../tokenize.ts';
 import type { Judge, JudgeContext, JudgeResult } from './judge.ts';
 import { formatScoreJson, parseJudgeOutput } from './parse.ts';
 
@@ -62,8 +62,9 @@ export function medianWordCount(items: readonly Pick<Item, 'answer'>[]): number 
 export function isLongAnswer(item: Item, ctx: JudgeContext): boolean {
   const ref = ctx.lengthReference;
   if (ref === undefined) return false;
-  const words = wordCount(item.answer);
-  return ref.kind === 'pair_short' ? words >= VERBOSITY_PAIR_RATIO * ref.words : words > ref.words;
+  return ref.kind === 'pair_short'
+    ? whitespaceWordCount(item.answer) >= VERBOSITY_PAIR_RATIO * ref.words
+    : wordCount(item.answer) > ref.words;
 }
 
 /** Semantic index the mock intends to output, or null when it has no planted truth. */

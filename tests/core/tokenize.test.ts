@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bigrams, tokenize, unigrams, wordCount } from '../../src/core/tokenize.ts';
+import { bigrams, tokenize, unigrams, whitespaceWordCount, wordCount } from '../../src/core/tokenize.ts';
 
 describe('tokenize', () => {
   it('lowercases, strips punctuation and splits on whitespace', () => {
@@ -26,6 +26,20 @@ describe('tokenize', () => {
 
   it('wordCount counts tokens', () => {
     expect(wordCount('One two, three.')).toBe(3);
+    expect(wordCount('alpha beta -- --')).toBe(2);
+  });
+});
+
+describe('whitespaceWordCount', () => {
+  it('preserves punctuation-only segments as whitespace words', () => {
+    expect(whitespaceWordCount('alpha beta -- --')).toBe(4);
+    expect(whitespaceWordCount(' ... !! ')).toBe(2);
+  });
+
+  it('uses Unicode whitespace separators and ignores empty segments', () => {
+    expect(whitespaceWordCount(' \talpha\r\nbeta\u00a0--\u2003-- ')).toBe(4);
+    expect(whitespaceWordCount('')).toBe(0);
+    expect(whitespaceWordCount(' \t\r\n\u00a0\u2003 ')).toBe(0);
   });
 });
 

@@ -7,6 +7,7 @@ import {
   createReplayJudge,
   FLIP_FLOP_RATE,
   INJECTION_MARKER,
+  isLongAnswer,
   medianWordCount,
   MERGE_FIX_MARKER,
   MOCK_DEFECTS,
@@ -17,7 +18,7 @@ import { createChild, createRubric } from '../../../src/core/rubric/rubric.ts';
 import { unwrap } from '../../../src/core/result.ts';
 import { generateSyntheticSet, SYNTHETIC_RUBRIC_V1, syntheticRubricV2Edits } from '../../../src/core/fixtures/synthetic.ts';
 import { importProbeSets, injectionToItems, pairToItems } from '../../../src/core/goldset/probesets.ts';
-import { wordCount } from '../../../src/core/tokenize.ts';
+import { whitespaceWordCount, wordCount } from '../../../src/core/tokenize.ts';
 
 const syn = generateSyntheticSet(36);
 const v1 = unwrap(createRubric({ setId: 's', ...SYNTHETIC_RUBRIC_V1 }, syn.scale));
@@ -95,11 +96,23 @@ describe('planted behaviour', () => {
     if (!probes.ok) throw new Error('probe import failed');
     for (const pair of probes.value.pairs) {
       const { short, long } = pairToItems(pair);
-      const c: JudgeContext = { ...ctx, lengthReference: { kind: 'pair_short', words: wordCount(pair.shortText) } };
+      const c: JudgeContext = { ...ctx, lengthReference: { kind: 'pair_short', words: whitespaceWordCount(pair.shortText) } };
       const t = syn.truth[short.key]!;
       expect(scores('verbosity', [short, long], c)).toEqual([t, Math.min(t + 1, 4)]);
       expect(scores('clean', [short, long], c)).toEqual([t, t]);
     }
+  });
+
+  it.each([
+    { answer: 'gamma delta epsilon -- --', expected: false },
+    { answer: 'gamma delta epsilon -- -- --', expected: true },
+    { answer: 'gamma delta epsilon -- -- -- --', expected: true },
+  ])('verbosity pair threshold preserves punctuation words: $answer', ({ answer, expected }) => {
+    const short = { key: 'punctuation-pair', taskText: 't', answer: 'alpha beta -- --' };
+    const c: JudgeContext = { ...ctx, lengthReference: { kind: 'pair_short', words: whitespaceWordCount(short.answer) } };
+    expect(c.lengthReference?.words).toBe(4);
+    expect(isLongAnswer(short, c)).toBe(false);
+    expect(isLongAnswer({ ...short, answer }, c)).toBe(expected);
   });
 
   it('verbosity: +1 on items longer than the dev median, none without a reference', () => {
@@ -108,6 +121,12 @@ describe('planted behaviour', () => {
     const expected = syn.items.map((it, i) => (wordCount(it.answer) > median ? Math.min(truths[i]! + 1, 4) : truths[i]!));
     expect(scores('verbosity', syn.items, c)).toEqual(expected);
     expect(scores('verbosity', syn.items)).toEqual(truths);
+  });
+
+  it('verbosity dev-median references retain normalized word counts', () => {
+    const item = { key: 'punctuation-median', taskText: 't', answer: 'alpha beta -- --' };
+    expect(medianWordCount([item, { answer: 'gamma --' }])).toBe(1.5);
+    expect(isLongAnswer(item, { ...ctx, lengthReference: { kind: 'dev_median', words: 2 } })).toBe(false);
   });
 
   it('flip-flop: about 30% random draws, seeded per item and replicate', () => {

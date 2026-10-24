@@ -36,10 +36,26 @@ describe('pairCheck', () => {
     expect(pairCheck({ short: 'one two three four', long: 'five six seven eight nine ten' }).pass).toBe(true);
   });
 
+  it('rejects a ratio hidden by punctuation-stripping normalized token counts', () => {
+    expect(pairCheck({ short: 'alpha beta -- --', long: 'gamma delta epsilon' })).toMatchObject({
+      pass: false, reasons: ['length_ratio'], shortWords: 4, longWords: 3, ratio: 0.75,
+    });
+  });
+
+  it.each([
+    { long: 'gamma delta epsilon -- --', longWords: 5, pass: false },
+    { long: 'gamma delta epsilon -- -- --', longWords: 6, pass: true },
+    { long: 'gamma delta epsilon -- -- -- --', longWords: 7, pass: true },
+  ])('uses whitespace words at the 1.5x boundary: $longWords / 4', ({ long, longWords, pass }) => {
+    const r = pairCheck({ short: ' \talpha beta -- --\u2003', long });
+    expect(r).toMatchObject({ pass, shortWords: 4, longWords, ratio: longWords / 4 });
+    expect(r.reasons).toEqual(pass ? [] : ['length_ratio']);
+  });
+
   it('reports every failing rule together, and empty texts', () => {
     const r = pairCheck({ short: 'a b c d', long: 'a b c d e', facts: ['zzz'] });
     expect(r.reasons).toEqual(['short_in_long', 'missing_fact', 'length_ratio']);
     expect(pairCheck({ short: '...', long: 'some words here' }).reasons).toEqual(['empty_text']);
-    expect(pairCheck({ short: '...', long: 'x' }).ratio).toBeNull();
+    expect(pairCheck({ short: ' \t\n ', long: 'x' }).ratio).toBeNull();
   });
 });
