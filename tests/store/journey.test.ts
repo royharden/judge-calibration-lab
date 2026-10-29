@@ -1,0 +1,100 @@
+import { describe, expect, it } from 'vitest';
+import { MemoryStore, DEMO_BANNER } from '../../src/store/MemoryStore.ts';
+import type { Store } from '../../src/store/Store.ts';
+import { unwrap } from '../../src/core/result.ts';
+import { syntheticRubricV2Edits } from '../../src/core/fixtures/synthetic.ts';
+import { IMPORT_TRAP_FILES } from '../../src/core/fixtures/traps.ts';
+import { burnConfirmationText } from '../../src/core/heldoutlock/policy.ts';
+import { diagnosticsForRun, loadDevDiagnostics } from '../../src/ui/actions.ts';
+
+async function finish(store: Store, runId: string) {
+  for (let chunks = 0; chunks < 200; chunks++) {
+    const progress = unwrap(await store.runChunk({ runId, maxItems: 10 }));
+    if (progress.status === 'complete') return progress;
+    expect(progress.processed).toBeGreaterThan(0);
+  }
+  throw new Error('bounded journey did not complete');
+}
+
+describe('offline demo journey through the Store contract', () => {
+  it('imports, freezes, diagnoses, rules, edits, preregisters and confirms a computed report', async () => {
+    // what_bug_this_catches: individually correct core modules fail to form the advertised journey.
+    const store: Store = new MemoryStore();
+    const before = unwrap(await store.getSnapshot());
+    expect(before.sets).toEqual([]);
+    expect(before.banner).toBe(DEMO_BANNER);
+    const ids = unwrap(await store.loadDemo());
+    const loaded = unwrap(await store.getSnapshot());
+    expect(loaded.sets[0]!.items).toHaveLength(120);
+    expect(loaded.sets[0]!.frozen).toBe(false);
+    expect(loaded.sets[0]!.devAnnotations).toEqual([]);
+    const trap = await store.importSet({ files: IMPORT_TRAP_FILES });
+    expect(trap.ok).toBe(false);
+    if (!trap.ok) expect(trap.error.reason).toBe('import_invalid');
+    expect(unwrap(await store.getSnapshot()).sets).toHaveLength(1);
+    const frozen = unwrap(await store.freezeSet({ setId: ids.setId, seed: 36, heldoutFraction: 0.5 }));
+    expect(frozen.split!.dev).toHaveLength(60);
+    expect(frozen.split!.heldout).toHaveLength(60);
+    const ceiling = unwrap(await store.getDevCeiling({ setId: ids.setId }));
+    expect(ceiling.pairs).toHaveLength(10);
+    expect(ceiling.interval.draws).toBe(2000);
+    const args = { ...ids, includeProbes: true };
+    const plan = unwrap(await store.planRun(args));
+    expect(plan.dryRun).toBe(true);
+    expect(plan.calls).toBe(60 * 6 + 24 * 2 + 12 * 2);
+    expect(plan.worstCaseUsd).toBe(0);
+    expect(plan.worstCaseInputTokens).toBeGreaterThanOrEqual(plan.projectedInputTokens);
+    expect((await store.createDevRun(args)).ok).toBe(false);
+    const baseline = unwrap(await store.createDevRun({ ...args, confirmed: true }));
+    await finish(store, baseline.id);
+    expect(unwrap(await store.getDevResults({ runId: baseline.id })).suggestions).toEqual([]);
+    const diagnostics = unwrap(await loadDevDiagnostics(store, baseline.id));
+    expect(diagnosticsForRun(diagnostics, baseline.id)).toBe(diagnostics);
+    expect(diagnostics.probes?.repeatability?.replicateIds).toEqual([0, 1, 2]);
+    expect(diagnostics.baselines.lexical.point.kind).toBe('value');
+    expect(diagnostics.baselines.modal.point.kind).toBe('undefined');
+    const suggestions = diagnostics.suggestions;
+    expect(suggestions.length).toBeGreaterThan(0);
+    const merge = suggestions.find((s) => s.template === 'adjacent_confusion')!;
+    expect(merge.fields).toContain('levels[4].description');
+    const ruling = unwrap(await store.appendRuling({ suggestionId: merge.suggestionId, decision: 'accept', note: 'Clarify level 4.' }));
+    expect(ruling.inputHash).toBe(baseline.resultHash ?? unwrap(await store.getSnapshot()).runs.find((r) => r.id === baseline.id)!.resultHash);
+    const child = unwrap(await store.createChild({ rubricId: ids.rubricId, edits: syntheticRubricV2Edits(), changeNote: 'mechanical fixture repair — proves plumbing, not judge quality' }));
+    const chosen = unwrap(await store.createDevRun({ ...args, rubricId: child.id, confirmed: true }));
+    expect(diagnosticsForRun(diagnostics, chosen.id)).toBeNull();
+    await finish(store, chosen.id);
+    const chosenSuggestions = unwrap(await loadDevDiagnostics(store, chosen.id)).suggestions;
+    expect(chosenSuggestions.some((s) => s.template === 'adjacent_confusion')).toBe(false);
+    const prereg = unwrap(await store.preregister({ setId: ids.setId, judgeConfigId: ids.judgeConfigId, baselineRubricId: ids.rubricId, chosenRubricId: child.id }));
+    expect(prereg.pins.baselineDevRunId).toBe(baseline.id);
+    expect(Object.values(prereg.pins.fitHashes).every((h) => /^[0-9a-f]{64}$/.test(h))).toBe(true);
+    expect((await store.report({ preregId: prereg.id })).ok).toBe(false);
+    expect((await store.requestHeldoutLook({ preregId: prereg.id })).ok).toBe(false);
+    const grant = unwrap(await store.requestHeldoutLook({ preregId: prereg.id, confirmed: true }));
+    expect(grant.newSlotsUsed).toBe(2);
+    expect(grant.slotsRemaining).toBe(0);
+    for (const look of grant.looks) await finish(store, look.runId);
+    const report = unwrap(await store.report({ preregId: prereg.id }));
+    expect(report.denominators.commonEvaluable).toBe(60);
+    expect(report.delta.draws).toBe(2000);
+    expect(report.fits.mismatchFields).toEqual([]);
+    expect(report.contamination.contaminated).toBe(false);
+    expect(report.verdict.outcome).not.toBe('cannot_support');
+    if (report.delta.lo.kind === 'value' && report.delta.lo.value > 0) expect(report.verdict.outcome).toBe('improved');
+    expect(unwrap(await store.report({ preregId: prereg.id }))).toEqual(report);
+    const third = unwrap(await store.createChild({ rubricId: child.id, edits: { instructions: `${child.instructions}\nA distinct third version.` }, changeNote: 'third-version lock trap' }));
+    const thirdPrereg = unwrap(await store.preregister({ setId: ids.setId, judgeConfigId: ids.judgeConfigId, baselineRubricId: ids.rubricId, chosenRubricId: third.id }));
+    const refused = await store.requestHeldoutLook({ preregId: thirdPrereg.id, confirmed: true });
+    expect(refused.ok).toBe(false);
+    if (!refused.ok) expect(refused.error.reason).toBe('heldout_exhausted');
+    const wrongBurn = await store.burnScope({ scopeKey: prereg.scopeKey, reason: 'exploratory third version', confirmation: 'yes' });
+    expect(wrongBurn.ok).toBe(false);
+    unwrap(await store.burnScope({ scopeKey: prereg.scopeKey, reason: 'exploratory third version', confirmation: burnConfirmationText(prereg.scopeKey) }));
+    const allowed = unwrap(await store.requestHeldoutLook({ preregId: thirdPrereg.id, confirmed: true }));
+    expect(allowed.burned).toBe(true);
+    expect(allowed.newSlotsUsed).toBe(1);
+    expect(unwrap(await store.report({ preregId: prereg.id })).contamination.contaminated).toBe(true);
+    expect(unwrap(await store.getSnapshot()).reports[0]!.contamination.contaminated).toBe(true);
+    expect(unwrap(await store.reconcileLedger()).ok).toBe(true);
+  }, 30_000);
+});

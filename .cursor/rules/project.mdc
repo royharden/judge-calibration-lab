@@ -1,0 +1,6 @@
+---
+description: Shared product guidance
+alwaysApply: true
+---
+
+Follow the repository-root AGENTS.md. It is the single product instruction source; do not maintain a second copy here.

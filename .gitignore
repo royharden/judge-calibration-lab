@@ -21,3 +21,22 @@ npm-debug.log*
 Thumbs.db
 
 # results/ is tracked on purpose (generated evidence is committed).
+
+# private agent scratch and local-only dataset downloads
+.agent-work/
+data/local/
+downloads/
+
+# Local credentials, private keys, archives, and local caches
+.creds/
+ArchiveManager-creds.txt
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.zip
+.venv/
+__pycache__/
+.pytest_cache/

@@ -1,0 +1,15 @@
+LLM-Judge Calibration Mini-Lab
+Copyright 2026 Roy Harden
+Original implementation and invented fixtures are licensed under MIT; see LICENSE.
+
+Conceptual prior art (no implementation code or data copied):
+https://github.com/mohammadi-hadi/judgekit — planted defects, probes and uncertainty
+https://github.com/judie-paul/judgecheck — agreement beside human references
+https://github.com/bengodgart/llm-judge-calibration — small-set uncertainty and honest limits
+https://github.com/1norqaq/audit-the-judge — care with verbosity pair construction
+https://github.com/cimo-labs/cje — reporting what evidence cannot support
+https://github.com/baranozgurtas/llm-judge-audit — judge auditing patterns
+
+Statistics were independently implemented in TypeScript. No prior-art dataset is shipped.
+TypeSafe/Anthropic/OpenAI-compatible adapters follow documented wire patterns, not copied SDK or cookbook source.
+Dependency packages retain their own licences. Real dataset and article rights must be verified before use.

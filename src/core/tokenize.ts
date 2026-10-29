@@ -1,6 +1,6 @@
 // Word tokenizer (PLAN.md §3.7/§3.8): lowercase, strip Unicode punctuation, split on
-// whitespace. These are word counts for the lexical baseline, length quantiles and the
-// 1.5x pair check, NOT billable model tokens.
+// whitespace. Normalized token counts serve the lexical baseline and length quantiles;
+// the 1.5x pair check uses whitespaceWordCount instead. Neither counts billable model tokens.
 
 import { normalizeText } from './canonical.ts';
 
@@ -17,6 +17,11 @@ export function tokenize(text: string): string[] {
 
 export function wordCount(text: string): number {
   return tokenize(text).length;
+}
+
+/** Whitespace-separated words, preserving punctuation-only segments (PLAN.md §3.8). */
+export function whitespaceWordCount(text: string): number {
+  return text.match(/\S+/gu)?.length ?? 0;
 }
 
 /** Unigrams are the tokens themselves (copy). */
