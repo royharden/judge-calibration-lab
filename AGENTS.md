@@ -20,7 +20,7 @@ Agent-only plans, transcripts, reviews, credentials and coordination state do no
 <!-- software-factory:begin -->
 ## SoftwareFactory entry
 
-Logical project: bolt-judge-calibration-lab. This file is the product entrypoint. Coordination notes and chat transcripts stay in the outer shell `C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab`, outside this Git repository. Current activation copy: worktree `C:\Worktrees\Bolt.New\judge-calibration-lab\gdl09-activation-001`, branch `gdl09/activation-001`. Do not push and do not change `origin`. Canonical skill: `C:\Users\Roy Harden\OneDrive\PJ-OD\skills\skills-bts\software-factory\SKILL.md`. Factory status: `C:\Users\Roy Harden\OneDrive\PJ-OD\SoftwareFactory\START.md`. Release 0.1.1 does not accept this application. The activated local checks are `npm ci`, `npm run typecheck`, `npm run lint`, `npm test` and `npm run build`. Eval, held-out, live or paid model calls, Deno deploy, Supabase, browser gold and a dev server stay outside this slice. Historical Dirty Mode records stay history.
+Logical project: bolt-judge-calibration-lab. This file is the product entrypoint. Coordination notes and chat transcripts stay in the outer shell `C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab`, outside this Git repository. Current copy: worktree `C:\Worktrees\Bolt.New\judge-calibration-lab\gdl09-activation-001`, branch `gdl09/activation-001`. The accepted activation candidate is `4b35a5048eea4f4ccfe02c0c9c0abedfb8f07e89`. Do not push and do not change `origin`. Canonical skill: `C:\Users\Roy Harden\OneDrive\PJ-OD\skills\skills-bts\software-factory\SKILL.md`. Factory status: `C:\Users\Roy Harden\OneDrive\PJ-OD\SoftwareFactory\START.md`. The local checks are `npm ci`, `npm run typecheck`, `npm run lint`, `npm test` and `npm run build`. Eval, held-out, live or paid model calls, Deno deploy, Supabase, browser gold and a dev server stay outside this slice. Historical Dirty Mode records stay history. The short successor note is `docs/HANDOFF.md`.
 <!-- software-factory:end -->
 
 <!-- xexport-auto:begin -->
@@ -31,7 +31,7 @@ reporting, and at the next available execution step when the last verified expor
 is older than 10 minutes (configurable). On a user status request, refresh if stale.
 
     xexport current --source <claude|codex|cursor|grok|antigravity> --session-id "<exact own session id>" \
-        --format html --mode append --out "C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab\.chatexports"
+        --format both --mode append --out "C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab\.chatexports"
 
 - Session id: `CODEX_THREAD_ID` (Codex), `CURSOR_CONVERSATION_ID` (Cursor),
   `CLAUDE_CODE_SESSION_ID` (Claude Code), `GROK_SESSION_ID` (Grok),
@@ -48,7 +48,7 @@ is older than 10 minutes (configurable). On a user status request, refresh if st
   guards. It is not literal line appending; unchanged content is a no-op. Preserve
   guard warnings verbatim, protected originals, and any companion's provenance.
 - For children, require xexport **0.2.2+** on Codex. Parent-driven export is:
-  `xexport subagents --source <claude|codex|cursor|grok|antigravity> --session-id "<exact parent id>" --format html --mode append --out "C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab\.chatexports"`.
+  `xexport subagents --source <claude|codex|cursor|grok|antigravity> --session-id "<exact parent id>" --format both --mode append --out "C:\Users\Roy Harden\OneDrive\PJ-OD\Bolt.New\judge-calibration-lab\.chatexports"`.
   Codex discovery includes direct children only; run again for each child with
   children of its own. Verify each returned ID against the explicitly linked child.
 - Native Codex children may self-export when runtime `CODEX_THREAD_ID` matches
@@ -66,7 +66,7 @@ is older than 10 minutes (configurable). On a user status request, refresh if st
   transcripts hold the user's prompts and tool output.
 - Exports are folders under `.chatexports\html\`. To read one, yours or another
   agent's, follow the `xexport-read` skill: page map in `index.html` first, then the
-  `page-NNN.html` files, each sized for one read. Add `--format both` to also keep a
-  single-file Markdown copy.
+  `page-NNN.html` files, each sized for one read. `--format both` also keeps the
+  single-file Markdown copy. Both formats are required.
 <!-- xexport-auto:end -->
 
