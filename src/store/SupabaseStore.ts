@@ -20,7 +20,9 @@ import { fitModal } from '../core/judge/modal.ts';
 import { undef, undefinedInterval } from '../core/judgestats/undefined.ts';
 import { policyBootstrapOptions } from '../core/heldoutlock/policyConst.ts';
 import { scopeKey } from '../core/heldoutlock/policy.ts';
-import type { JudgeConfig, Rubric, Verdict } from '../core/types.ts';
+import type { Annotation, Item, JudgeConfig, Rubric, Verdict } from '../core/types.ts';
+import type { BeforeAfterReport } from '../core/report/beforeAfter.ts';
+import type { RunStatus } from '../core/heldoutlock/policy.ts';
 import type { JobVerdict, LiveJob } from '../../supabase/functions/judge-run/contracts.ts';
 
 type DevBundle = { set: StoreSnapshot['sets'][number]; run: PublicRun; rubric: Rubric; config: JudgeConfig; verdicts: Verdict[]; jobs: LiveJob[]; jobVerdicts: JobVerdict[] };
@@ -31,7 +33,7 @@ function databaseError(error: { message: string; details?: string }): ReturnType
 /** Authenticated live persistence. Every consequential write uses a named RPC or judge-run. */
 export class SupabaseStore implements Store {
   #client: SupabaseClient;
-  #reports = new Map<string, import('../core/report/beforeAfter.ts').BeforeAfterReport>();
+  #reports = new Map<string, BeforeAfterReport>();
   constructor(client: SupabaseClient) { this.#client = client; }
   async #rpc<T>(name: string, args: unknown = {}): Promise<StoreResult<T>> {
     try {
@@ -70,7 +72,7 @@ export class SupabaseStore implements Store {
     return this.#rpc('import_set', { staged: parsed.value, parentSetId: args.parentSetId, itemGroups });
   }
   async freezeSet(args: Parameters<Store['freezeSet']>[0]): ReturnType<Store['freezeSet']> {
-    const input = await this.#rpc<{ items: import('../core/types.ts').Item[]; annotations: import('../core/types.ts').Annotation[]; seed: number; heldoutFraction: number }>('freeze_input', args);
+    const input = await this.#rpc<{ items: Item[]; annotations: Annotation[]; seed: number; heldoutFraction: number }>('freeze_input', args);
     if (!input.ok) return input;
     const split = computeSplit({ items: input.value.items, annotations: input.value.annotations, seed: args.seed ?? input.value.seed, heldoutFraction: args.heldoutFraction ?? input.value.heldoutFraction, frozenAt: new Date().toISOString() });
     if (!split.ok) return split;
@@ -119,7 +121,7 @@ export class SupabaseStore implements Store {
     return this.#rpc('create_dev_run', { ...args, includeProbes: args.includeProbes ?? true, plan: p.value.plan });
   }
   async runChunk(args: Parameters<Store['runChunk']>[0]): ReturnType<Store['runChunk']> {
-    const response = await this.#edge<{ run_id: string; status: import('../core/heldoutlock/policy.ts').RunStatus; processed: number; remaining: number; unusable_count: number; spent_usd: number; reserved_usd: number }>('score', { run_id: args.runId, max_items: args.maxItems ?? 10, request_id: crypto.randomUUID() });
+    const response = await this.#edge<{ run_id: string; status: RunStatus; processed: number; remaining: number; unusable_count: number; spent_usd: number; reserved_usd: number }>('score', { run_id: args.runId, max_items: args.maxItems ?? 10, request_id: crypto.randomUUID() });
     return response.ok ? ok({ runId: response.value.run_id, status: response.value.status, processed: response.value.processed, remaining: response.value.remaining, unusableCount: response.value.unusable_count, spentUsd: response.value.spent_usd, reservedUsd: response.value.reserved_usd }) : response;
   }
   async listVerdicts(args: Parameters<Store['listVerdicts']>[0]): ReturnType<Store['listVerdicts']> { return this.#rpc('list_verdicts', args); }
@@ -167,7 +169,7 @@ export class SupabaseStore implements Store {
   requestHeldoutLook(args: Parameters<Store['requestHeldoutLook']>[0]): ReturnType<Store['requestHeldoutLook']> { return args.confirmed === true ? this.#rpc('request_heldout_look', args) : Promise.resolve(fail('confirmation_required', 'confirm explicitly to spend held-out looks')); }
   burnScope(args: Parameters<Store['burnScope']>[0]): ReturnType<Store['burnScope']> { return this.#rpc('burn_scope', args); }
   async report(args: Parameters<Store['report']>[0]): ReturnType<Store['report']> {
-    const report = await this.#edge<import('../core/report/beforeAfter.ts').BeforeAfterReport>('report', { prereg_id: args.preregId });
+    const report = await this.#edge<BeforeAfterReport>('report', { prereg_id: args.preregId });
     if (report.ok) this.#reports.set(args.preregId, structuredClone(report.value));
     return report;
   }

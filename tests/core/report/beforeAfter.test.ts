@@ -68,7 +68,7 @@ describe('complete deterministic report assembly', () => {
   it('refuses unconfirmed reports, pin drift and custom policy', () => {
     expect(() => assembleBeforeAfter({ ...input(), confirmed: false } as unknown as ReportInput)).toThrow('confirmed');
     expect(() => assembleBeforeAfter({ ...input(), current: { ...input().current, splitHash: 'other' } })).toThrow('prereg_mismatch');
-    expect(() => assembleBeforeAfter({ ...input(), pins: { ...pins, policyVersion: 'custom' } })).toThrow('only policy');
+    expect(() => assembleBeforeAfter({ ...input(), pins: { ...pins, policyVersion: 'custom' } })).toThrow('pinned policy');
   });
   it('contamination is preserved and CSV output escapes spreadsheet formulas', () => {
     const report = assembleBeforeAfter({ ...input(), judgeName: '  =EXEC()', contamination: { contaminated: true, reasons: ['burned'] } });

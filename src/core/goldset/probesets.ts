@@ -99,7 +99,7 @@ type RowVisitor = (raw: Record<string, unknown>, id: string, line: number, issue
 function visitJsonl(text: string, file: string, issues: ProbeIssue[], visit: RowVisitor): number {
   const seen = new Set<string>();
   let rows = 0;
-  const lines = text.replace(/^﻿/, '').split(/\r\n|\n|\r/);
+  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n|\r/);
   lines.forEach((lineText, i) => {
     const line = i + 1;
     if (lineText.trim() === '') return;

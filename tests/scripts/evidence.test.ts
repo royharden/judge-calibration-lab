@@ -125,8 +125,8 @@ describe('row-level report recomputation (authored; not executed)', () => {
     wrongFit.input.fits.devInputHash = 'invented';
     await expect(evaluateReal({ schemaVersion: 's36-real-eval/v1', reports: [wrongFit] })).rejects.toThrow('fits differ');
     const changedHash = reportFixture();
-    changedHash.input.pins.annotationHash = 'invented';
-    changedHash.input.current.annotationHash = 'invented';
+    changedHash.input.pins = { ...changedHash.input.pins, annotationHash: 'invented' };
+    changedHash.input.current = { ...changedHash.input.current, annotationHash: 'invented' };
     await expect(evaluateReal({ schemaVersion: 's36-real-eval/v1', reports: [changedHash] })).rejects.toThrow('annotation hash');
     const leaked = reportFixture();
     leaked.input.items = [leaked.baselineDev.items[0]!, ...leaked.input.items.slice(1)];
