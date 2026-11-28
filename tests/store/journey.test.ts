@@ -30,11 +30,15 @@ describe('offline demo journey through the Store contract', () => {
     expect(loaded.sets[0]!.devAnnotations).toEqual([]);
     const trap = await store.importSet({ files: IMPORT_TRAP_FILES });
     expect(trap.ok).toBe(false);
-    if (!trap.ok) expect(trap.error.reason).toBe('import_invalid');
+    if (!trap.ok) {
+      expect(trap.error.reason).toBe('import_invalid');
+      console.info(`journey trap import refused reason=${trap.error.reason}`);
+    }
     expect(unwrap(await store.getSnapshot()).sets).toHaveLength(1);
     const frozen = unwrap(await store.freezeSet({ setId: ids.setId, seed: 36, heldoutFraction: 0.5 }));
     expect(frozen.split!.dev).toHaveLength(60);
     expect(frozen.split!.heldout).toHaveLength(60);
+    console.info(`journey frozen split dev=${frozen.split!.dev.length} heldout=${frozen.split!.heldout.length}`);
     const ceiling = unwrap(await store.getDevCeiling({ setId: ids.setId }));
     expect(ceiling.pairs).toHaveLength(10);
     expect(ceiling.interval.draws).toBe(2000);
@@ -68,14 +72,18 @@ describe('offline demo journey through the Store contract', () => {
     const prereg = unwrap(await store.preregister({ setId: ids.setId, judgeConfigId: ids.judgeConfigId, baselineRubricId: ids.rubricId, chosenRubricId: child.id }));
     expect(prereg.pins.baselineDevRunId).toBe(baseline.id);
     expect(Object.values(prereg.pins.fitHashes).every((h) => /^[0-9a-f]{64}$/.test(h))).toBe(true);
-    expect((await store.report({ preregId: prereg.id })).ok).toBe(false);
-    expect((await store.requestHeldoutLook({ preregId: prereg.id })).ok).toBe(false);
+    const unconfirmedReport = await store.report({ preregId: prereg.id });
+    const unconfirmedLook = await store.requestHeldoutLook({ preregId: prereg.id });
+    expect(unconfirmedReport.ok).toBe(false);
+    expect(unconfirmedLook.ok).toBe(false);
+    console.info(`journey unconfirmed held-out look refused ok=${unconfirmedLook.ok} report_ok=${unconfirmedReport.ok}`);
     const grant = unwrap(await store.requestHeldoutLook({ preregId: prereg.id, confirmed: true }));
     expect(grant.newSlotsUsed).toBe(2);
     expect(grant.slotsRemaining).toBe(0);
     for (const look of grant.looks) await finish(store, look.runId);
     const report = unwrap(await store.report({ preregId: prereg.id }));
     expect(report.denominators.commonEvaluable).toBe(60);
+    console.info(`journey confirmed report commonEvaluable=${report.denominators.commonEvaluable} verdict=${report.verdict.outcome}`);
     expect(report.delta.draws).toBe(2000);
     expect(report.fits.mismatchFields).toEqual([]);
     expect(report.contamination.contaminated).toBe(false);
