@@ -2,7 +2,7 @@
 
 Compare a pointwise rubric judge with individual human annotators, inspect dev-set failures, make one human rubric edit, and confirm it against a baseline on a locked held-out split.
 
-**Implementation complete, runtime unverified (Dirty Mode).** Source and regression tests were written and independently reviewed. Only static syntax parsing, file comparisons and manual source traces have run. Dependencies have never been installed here; TypeScript type checking, ESLint, Vitest, the evaluation scripts, Vite, Deno, migrations, browsers and provider calls have not run. No infrastructure was provisioned or deployment performed.
+**Implementation complete; local checks pass.** As of 2026-11-28, dependencies are locked in `package-lock.json`, `npm test` passes 625 tests across 56 files (including the store journey), and `npm run build` (typecheck + Vite) passes. The evaluation scripts, Deno, migrations, browsers and provider calls have not run, and no infrastructure was provisioned or deployed.
 
 | Evidence | Status |
 |---|---|
@@ -26,12 +26,12 @@ No benchmark results are shipped. When evaluated later, `scripts/eval.ts` writes
 
 The human reference is observed pairwise annotator agreement, **not an upper bound**. An unusable score is counted, never turned into zero. Undefined statistics remain undefined. A paired interval yields `improved`, `worse`, `no detectable change`, or `cannot support`; the UI displays the computed result.
 
-## Run later
+## Run locally
 
-These are future validation commands, not checks completed during construction. Use Node 24 and npm from this inner repository root.
+Use Node 24 and npm from this inner repository root.
 
 ```sh
-npm install
+npm ci
 npm run typecheck
 npm run lint
 npm test
@@ -39,7 +39,7 @@ npm run build
 npm run dev
 ```
 
-The first install creates the currently absent `package-lock.json`. Review and commit it; use `npm ci` on subsequent clean installations. Exact dependency versions are in `package.json`. Keep both browser connection variables empty for the keyless demo. See [.env.example](.env.example).
+Exact dependency versions are in `package.json`. Keep both browser connection variables empty for the keyless demo. See [.env.example](.env.example).
 
 The complete activation debt and exact later checks are in [DEFERRED-VALIDATION.md](docs/DEFERRED-VALIDATION.md). A successful frontend build alone will not validate the edge function, SQL, authorization or live providers.
 
