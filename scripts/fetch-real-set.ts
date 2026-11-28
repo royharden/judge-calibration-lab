@@ -8,6 +8,7 @@
  * proxy, auth, extraction, conversion, provider calls or automatic import.
  */
 import { lookup } from 'node:dns/promises';
+import type { IncomingMessage } from 'node:http';
 import { request } from 'node:https';
 import { isIP } from 'node:net';
 import { open, stat } from 'node:fs/promises';
@@ -65,7 +66,7 @@ export async function main(args: readonly string[]) {
     // Exclusive create: existing files/symlinks cannot be overwritten. A partial
     // file is intentionally retained and explicitly reported on failure.
     file = await open(opts.dest, 'wx');
-    const response = await new Promise<import('node:http').IncomingMessage>((accept, reject) => {
+    const response = await new Promise<IncomingMessage>((accept, reject) => {
       const req = request({ protocol: 'https:', hostname: pinnedAddress, servername: opts.url.hostname,
         port: 443, method: 'GET', path: opts.url.pathname + opts.url.search,
         headers: { Host: opts.url.host, 'User-Agent': 'judge-calibration-lab-download/0.1', 'Accept-Encoding': 'identity' },

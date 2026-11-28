@@ -14,7 +14,7 @@ import { fitLexical, applyLexical } from '../core/judge/lexical.ts';
 import { fitModal } from '../core/judge/modal.ts';
 import { PROMPT_TEMPLATE_VERSION, OUTPUT_SCHEMA_VERSION } from '../core/judge/prompt.ts';
 import { LEVEL_MAP_VERSION } from '../core/judge/levelMap.ts';
-import type { TruthMap } from '../core/judge/judge.ts';
+import type { JudgeResult, TruthMap } from '../core/judge/judge.ts';
 import { devResultHash, diagnose, makeDevResults, type DevResults } from '../core/diagnostics/findings.ts';
 import { generateSuggestions as suggest } from '../core/diagnostics/suggestions.ts';
 import { judgeAgreementWithInterval, referenceCeilingWithInterval } from '../core/judgestats/agreement.ts';
@@ -47,7 +47,7 @@ export class MemoryStore implements Store {
   #runs = new Map<string, PrivateRun>();
   #suggestions = new Map<string, StoredSuggestion>();
   #reports = new Map<string, BeforeAfterReport>();
-  #cache = new Map<string, import('../core/judge/judge.ts').JudgeResult>();
+  #cache = new Map<string, JudgeResult>();
   #lock: LockState = createLockState();
   #rulings: RulingsLog = createRulingsLog();
   #serialTail: Promise<void> = Promise.resolve();

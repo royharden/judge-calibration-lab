@@ -115,7 +115,7 @@ export function parseItemsJsonl(text: string, file = 'items.jsonl'): ItemsParse 
   const seen = new Set<string>();
   let rowCount = 0;
 
-  const lines = text.replace(/^﻿/, '').split(/\r\n|\n|\r/);
+  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n|\r/);
   for (let i = 0; i < lines.length; i++) {
     const lineNo = i + 1;
     const lineText = lines[i]!;
